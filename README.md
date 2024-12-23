@@ -1,6 +1,7 @@
 # Vue MFE Wrapper
 
 [![npm version](https://img.shields.io/npm/v/@mknz/vue-mfe-wrapper)](https://www.npmjs.com/package/@mknz/vue-mfe-wrapper)
+[![Tests](https://img.shields.io/badge/tests-26%20passing-brightgreen)](https://github.com/mukunzidd/vue-mfe-wrapper/actions)
 
 A lightweight framework for creating and managing Vue.js micro-frontends.
 
