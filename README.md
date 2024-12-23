@@ -1,5 +1,8 @@
 # Vue MFE Wrapper
 
+[![Tests](https://img.shields.io/badge/tests-26%20passing-brightgreen)](https://github.com/mukunzi10/vue-mfe-wrapper/actions)
+[![npm version](https://img.shields.io/npm/v/@mknz/vue-mfe-wrapper)](https://www.npmjs.com/package/@mknz/vue-mfe-wrapper)
+
 A Vue.js wrapper framework for micro-frontend architecture. This package provides a set of tools and commands to create, manage, and use micro-frontend features in your Vue.js applications.
 
 ## Installation
