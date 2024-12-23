@@ -23,15 +23,14 @@
   ],
   "scripts": {
     "dev": "vite",
-    "demo": "vite --config vite.demo.config.ts",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "test:unit": "vitest",
-    "build-only": "vite build && tsc -p tsconfig.cli.json",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
-    "postinstall": "chmod +x ./bin/cli.js"
+    "format": "prettier --write src/"
   },
   "peerDependencies": {
     "vue": "^3.3.0"

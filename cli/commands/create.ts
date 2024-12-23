@@ -2,6 +2,7 @@ import { execSync } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
 import chalk from 'chalk'
+import { CLIError, validateProjectName, handleError } from '../utils/errors'
 
 const TEMPLATE_FILES = {
   'src/App.vue': `<template>
@@ -149,11 +150,12 @@ export default defineConfig({
 
 export async function create(projectName: string) {
   try {
+    validateProjectName(projectName)
+
     // Create project directory
     const projectPath = path.resolve(process.cwd(), projectName)
     if (fs.existsSync(projectPath)) {
-      console.error(chalk.red(`Error: Directory ${projectName} already exists`))
-      process.exit(1)
+      throw new CLIError(`Directory ${projectName} already exists`)
     }
 
     fs.mkdirSync(projectPath)
@@ -171,7 +173,12 @@ export async function create(projectName: string) {
 
     // Install dependencies
     console.log(chalk.blue('Installing dependencies...'))
-    execSync('npm install', { cwd: projectPath, stdio: 'inherit' })
+    try {
+      execSync('npm install', { cwd: projectPath, stdio: 'inherit' })
+    } catch (error) {
+      console.error(chalk.red('Error installing dependencies:'), error)
+      throw error
+    }
 
     console.log(chalk.green(`
 Successfully created project ${projectName}
@@ -181,7 +188,6 @@ Next steps:
   npm run dev
 `))
   } catch (error) {
-    console.error(chalk.red('Error creating project:'), error)
-    process.exit(1)
+    handleError(error)
   }
 }
