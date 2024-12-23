@@ -42,7 +42,7 @@ program
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
@@ -51,7 +51,7 @@ program
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@mknz/vue-mfe-wrapper": "^0.1.0",
+    "@mknz/vue-mfe-wrapper": "^0.1.1",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
   },
