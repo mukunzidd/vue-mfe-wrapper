@@ -54,8 +54,9 @@ export async function importFeatures(features: string[]) {
     // Generate new imports with components
     const newImports = features.map(f => {
       const featureName = getFeatureName(f)
-      return `export { ${featureName}, ${getComponentNames(f)} } from '${f}'
-import '${f}/style.css'`
+      const components = getComponentNames(f)
+      return `export { ${featureName}, ${components} } from '${f}';
+import '${f}/dist/style.css';`
     }).join('\n')
     
     // Combine existing content with new imports
@@ -93,7 +94,7 @@ ${chalk.gray(`  const config = {
 function getFeatureName(packageName: string): string {
   const parts = packageName.split('/')
   const lastPart = parts[parts.length - 1]
-  return lastPart
+  return 'VueMfe' + lastPart
     .split('-')
     .map(part => part.charAt(0).toUpperCase() + part.slice(1))
     .join('')
