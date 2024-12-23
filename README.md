@@ -1,45 +1,141 @@
-# vue-mfe-wrapper
+# @mknz/vue-mfe-wrapper
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue.js micro-frontend framework that allows you to dynamically load and manage Vue.js features in a modular way.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 🔌 Plug-and-play feature integration
+- 🎨 Customizable layout with slots (header, content, footer)
+- 🔄 Dynamic feature loading
+- 🎯 Type-safe feature configuration
+- 📦 Easy to extend and maintain
 
-## Type Support for `.vue` Imports in TS
+## Installation
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+```bash
+npm install @mknz/vue-mfe-wrapper
+```
 
-## Customize configuration
+## Quick Start
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. Import and use the wrapper component:
 
-## Project Setup
+```vue
+<template>
+  <FrameworkWrapper :config="config">
+    <template #header>
+      <header>Your Header</header>
+    </template>
+    
+    <!-- Your content -->
+    
+    <template #footer>
+      <footer>Your Footer</footer>
+    </template>
+  </FrameworkWrapper>
+</template>
 
-```sh
+<script setup lang="ts">
+import { ref } from 'vue'
+import { FrameworkWrapper } from '@mknz/vue-mfe-wrapper'
+import type { WrapperConfig } from '@mknz/vue-mfe-wrapper'
+
+const config = ref<WrapperConfig>({
+  features: []
+})
+</script>
+```
+
+2. Load features dynamically:
+
+```typescript
+import MyFeature from '@mknz/my-feature'
+
+const loadFeature = () => {
+  config.value.features = [
+    {
+      name: 'my-feature',
+      component: MyFeature,
+      props: {
+        // Feature-specific props
+      }
+    }
+  ]
+}
+```
+
+## Configuration
+
+### WrapperConfig
+
+```typescript
+interface WrapperConfig {
+  features?: MfeFeature[]
+}
+
+interface MfeFeature {
+  name: string
+  component: any // Vue component
+  props?: Record<string, any>
+}
+```
+
+## Slots
+
+The wrapper provides three slots for layout customization:
+
+- `header`: Top section of the page
+- `default`: Main content area
+- `footer`: Bottom section of the page
+
+## Creating Features
+
+Features should be created as separate npm packages. Each feature should:
+
+1. Export a Vue component as its main entry point
+2. Include proper TypeScript types
+3. Follow the naming convention: `@mknz/vue-mfe-feature-*`
+
+Example feature structure:
+```
+my-feature/
+├── src/
+│   ├── components/
+│   │   └── MyFeature.vue
+│   ├── types.ts
+│   └── index.ts
+├── package.json
+└── README.md
+```
+
+## Example Features
+
+- [@mknz/vue-mfe-feature-a](https://github.com/yourusername/vue-mfe-feature-a) - A counter component with theming support
+
+## Development
+
+```bash
+# Install dependencies
 npm install
-```
 
-### Compile and Hot-Reload for Development
+# Run demo
+npm run demo
 
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
+# Build
 npm run build
-```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
+# Run tests
 npm run test:unit
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Contributing
 
-```sh
-npm run lint
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+MIT License - see the [LICENSE](LICENSE) file for details
