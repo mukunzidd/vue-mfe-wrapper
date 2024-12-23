@@ -1,14 +1,14 @@
 # @mknz/vue-mfe-wrapper
 
-A Vue.js micro-frontend framework that allows you to dynamically load and manage Vue.js features in a modular way.
+A Vue.js wrapper framework for managing and dynamically loading micro-frontend features.
 
 ## Features
 
-- 🔌 Plug-and-play feature integration
-- 🎨 Customizable layout with slots (header, content, footer)
+- 🔌 Plug-and-play micro-frontend architecture
+- 🛠️ CLI tools for project setup and feature management
+- 🎨 Customizable layout with header and footer slots
+- 📦 Easy feature integration
 - 🔄 Dynamic feature loading
-- 🎯 Type-safe feature configuration
-- 📦 Easy to extend and maintain
 
 ## Installation
 
@@ -18,124 +18,140 @@ npm install @mknz/vue-mfe-wrapper
 
 ## Quick Start
 
-1. Import and use the wrapper component:
+### Using the CLI
+
+1. Create a new Vue.js project with the wrapper:
+
+```bash
+npx @mknz/vue-mfe-wrapper create my-mfe-app
+cd my-mfe-app
+npm run dev
+```
+
+2. Import micro-frontend features:
+
+```bash
+npx @mknz/vue-mfe-wrapper import @mknz/vue-mfe-feature-a
+```
+
+### Manual Setup
+
+1. Install the package:
+
+```bash
+npm install @mknz/vue-mfe-wrapper
+```
+
+2. Use the wrapper in your App.vue:
 
 ```vue
 <template>
   <FrameworkWrapper :config="config">
     <template #header>
-      <header>Your Header</header>
+      <header>
+        <h1>My MFE App</h1>
+      </header>
     </template>
-    
-    <!-- Your content -->
-    
+
+    <div class="content">
+      <!-- Your content here -->
+    </div>
+
     <template #footer>
-      <footer>Your Footer</footer>
+      <footer>
+        <p>Powered by @mknz/vue-mfe-wrapper</p>
+      </footer>
     </template>
   </FrameworkWrapper>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import { FrameworkWrapper } from '@mknz/vue-mfe-wrapper'
-import type { WrapperConfig } from '@mknz/vue-mfe-wrapper'
 
-const config = ref<WrapperConfig>({
-  features: []
+const config = ref({
+  features: [] // List of enabled features
 })
 </script>
 ```
 
-2. Load features dynamically:
+## Supported Features
 
+The following micro-frontend features are officially supported and can be imported using the CLI:
+
+| Package Name | Description | Latest Version |
+|-------------|-------------|----------------|
+| `@mknz/vue-mfe-feature-a` | A customizable Counter component with light/dark themes | 0.1.0 |
+
+To use any of these features:
+
+1. Import the feature using the CLI:
+```bash
+npx @mknz/vue-mfe-wrapper import <package-name>
+```
+
+2. Add it to your config:
 ```typescript
-import MyFeature from '@mknz/my-feature'
+const config = ref({
+  features: ['<package-name>']
+})
+```
 
-const loadFeature = () => {
-  config.value.features = [
-    {
-      name: 'my-feature',
-      component: MyFeature,
-      props: {
-        // Feature-specific props
-      }
-    }
-  ]
-}
+3. Use the component in your template:
+```vue
+<template>
+  <FeatureComponent />
+</template>
+
+<script setup>
+import { FeatureComponent } from '<package-name>'
+</script>
 ```
 
 ## Configuration
 
-### WrapperConfig
+The wrapper accepts a configuration object with the following properties:
 
 ```typescript
 interface WrapperConfig {
-  features?: MfeFeature[]
-}
-
-interface MfeFeature {
-  name: string
-  component: any // Vue component
-  props?: Record<string, any>
+  features: string[] // List of enabled feature package names
 }
 ```
 
 ## Slots
 
-The wrapper provides three slots for layout customization:
+The wrapper provides three slots for customization:
 
-- `header`: Top section of the page
+- `header`: Top section of the layout
 - `default`: Main content area
-- `footer`: Bottom section of the page
+- `footer`: Bottom section of the layout
 
-## Creating Features
+## CLI Commands
 
-Features should be created as separate npm packages. Each feature should:
-
-1. Export a Vue component as its main entry point
-2. Include proper TypeScript types
-3. Follow the naming convention: `@mknz/vue-mfe-feature-*`
-
-Example feature structure:
-```
-my-feature/
-├── src/
-│   ├── components/
-│   │   └── MyFeature.vue
-│   ├── types.ts
-│   └── index.ts
-├── package.json
-└── README.md
-```
-
-## Example Features
-
-- [@mknz/vue-mfe-feature-a](https://github.com/yourusername/vue-mfe-feature-a) - A counter component with theming support
-
-## Development
+### Create a New Project
 
 ```bash
-# Install dependencies
-npm install
-
-# Run demo
-npm run demo
-
-# Build
-npm run build
-
-# Run tests
-npm run test:unit
+npx @mknz/vue-mfe-wrapper create <project-name>
 ```
+
+Creates a new Vue.js project with the MFE wrapper pre-configured.
+
+### Import Features
+
+```bash
+npx @mknz/vue-mfe-wrapper import <feature-package-name>
+```
+
+Imports and sets up a micro-frontend feature in your project.
 
 ## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details
+MIT

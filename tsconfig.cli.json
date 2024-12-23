@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "include": ["cli/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "outDir": "dist/cli",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "strict": true
+  }
+}
