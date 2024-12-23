@@ -1,6 +1,6 @@
 {
   "name": "@mknz/vue-mfe-wrapper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "A Vue.js wrapper framework for micro-frontend architecture",
   "type": "module",
