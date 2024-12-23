@@ -9,7 +9,6 @@ import chalk from 'chalk'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const WRAPPER_ROOT = resolve(__dirname, '..')
 
 const program = new Command()
 
@@ -36,6 +35,47 @@ program
 
       // Create project files
       const templateFiles = {
+        'package.json': `{
+  "name": "${projectName}",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "@mknz/vue-mfe-wrapper": "^0.1.0",
+    "vue": "^3.3.11",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.3.3",
+    "@tsconfig/node18": "^18.2.2",
+    "@types/jsdom": "^21.1.6",
+    "@types/node": "^18.19.3",
+    "@vitejs/plugin-vue": "^4.5.2",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/test-utils": "^2.4.3",
+    "@vue/tsconfig": "^0.5.0",
+    "eslint": "^8.49.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "jsdom": "^23.0.1",
+    "npm-run-all2": "^6.1.1",
+    "prettier": "^3.0.3",
+    "typescript": "~5.3.0",
+    "vite": "^5.0.10",
+    "vitest": "^1.0.4",
+    "vue-tsc": "^1.8.25"
+  }
+}`,
         'src/App.vue': `<template>
   <FrameworkWrapper :config="config">
     <template #header>
@@ -50,48 +90,43 @@ program
 
     <template #footer>
       <footer class="footer">
-        <p>Powered by @mknz/vue-mfe-wrapper</p>
+        <p>&copy; 2024 Vue MFE Project</p>
       </footer>
     </template>
   </FrameworkWrapper>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
 import { FrameworkWrapper } from '@mknz/vue-mfe-wrapper'
+import type { FrameworkConfig } from '@mknz/vue-mfe-wrapper'
 
-const config = ref({
+const config: FrameworkConfig = {
   features: []
-})
+}
 </script>
 
-<style>
+<style scoped>
 .header {
-  background-color: #4a5568;
-  color: white;
   padding: 1rem;
-  text-align: center;
+  background-color: #42b883;
+  color: white;
 }
 
 .content {
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .footer {
-  background-color: #4a5568;
-  color: white;
   padding: 1rem;
+  background-color: #35495e;
+  color: white;
   text-align: center;
-  margin-top: auto;
 }
 </style>`,
-
-        'src/main.js': `import { createApp } from 'vue'
+        'src/main.ts': `import { createApp } from 'vue'
 import App from './App.vue'
 
-const app = createApp(App)
-app.mount('#app')`,
-
+createApp(App).mount('#app')`,
         'index.html': `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -102,32 +137,65 @@ app.mount('#app')`,
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>`,
-
-        'package.json': `{
-  "name": "${projectName}",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "vue": "^3.3.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^4.5.2",
-    "vite": "^5.0.10"
+        'tsconfig.json': `{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ]
+}`,
+        'tsconfig.app.json': `{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["src/**/__tests__/*"],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }`,
-
-        'vite.config.js': `import { fileURLToPath, URL } from 'node:url'
+        'tsconfig.node.json': `{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "include": [
+    "vite.config.*",
+    "vitest.config.*",
+    "cypress.config.*",
+    "nightwatch.config.*",
+    "playwright.config.*"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  }
+}`,
+        'tsconfig.vitest.json': `{
+  "extends": "./tsconfig.app.json",
+  "exclude": [],
+  "compilerOptions": {
+    "composite": true,
+    "lib": [],
+    "types": ["node", "jsdom"]
+  }
+}`,
+        'vite.config.ts': `import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -135,9 +203,74 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   }
-})`
+})`,
+        '.gitignore': `# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo`,
+        'README.md': `# ${projectName}
+
+This is a Vue.js micro-frontend project created with @mknz/vue-mfe-wrapper.
+
+## Project Setup
+
+\`\`\`sh
+npm install
+\`\`\`
+
+### Compile and Hot-Reload for Development
+
+\`\`\`sh
+npm run dev
+\`\`\`
+
+### Type-Check, Compile and Minify for Production
+
+\`\`\`sh
+npm run build
+\`\`\`
+
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+\`\`\`sh
+npm run test:unit
+\`\`\`
+
+### Lint with [ESLint](https://eslint.org/)
+
+\`\`\`sh
+npm run lint
+\`\`\`
+`
       }
 
+      // Create project files
       for (const [filePath, content] of Object.entries(templateFiles)) {
         const fullPath = join(projectPath, filePath)
         fs.mkdirSync(dirname(fullPath), { recursive: true })
@@ -150,11 +283,6 @@ export default defineConfig({
       // Install dependencies
       console.log(chalk.blue('Installing dependencies...'))
       execSync('npm install', { cwd: projectPath, stdio: 'inherit' })
-
-      // Link local wrapper package
-      console.log(chalk.blue('Linking local wrapper package...'))
-      execSync('npm link', { cwd: WRAPPER_ROOT, stdio: 'inherit' })
-      execSync('npm link @mknz/vue-mfe-wrapper', { cwd: projectPath, stdio: 'inherit' })
 
       console.log(chalk.green(`
 Successfully created project ${projectName}
@@ -175,38 +303,22 @@ program
   .argument('<features...>', 'Feature names to import (space-separated)')
   .action(async (features) => {
     try {
-      const SUPPORTED_FEATURES = [
-        '@mknz/vue-mfe-feature-a'
-        // Add more supported features here
-      ]
-
       // Check if we're in a Vue project
       if (!fs.existsSync('package.json')) {
         console.error(chalk.red('Error: package.json not found. Make sure you are in a Vue project directory.'))
         process.exit(1)
       }
 
+      // Read package.json
       const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
       if (!packageJson.dependencies?.['@mknz/vue-mfe-wrapper']) {
         console.error(chalk.red('Error: This is not a Vue MFE project. Please run this command in a project created with @mknz/vue-mfe-wrapper.'))
         process.exit(1)
       }
 
-      // Validate features
-      const invalidFeatures = features.filter(f => !SUPPORTED_FEATURES.includes(f))
-      if (invalidFeatures.length > 0) {
-        console.error(chalk.red(`Error: The following features are not supported: ${invalidFeatures.join(', ')}`))
-        console.log(chalk.blue(`Supported features: ${SUPPORTED_FEATURES.join(', ')}`))
-        process.exit(1)
-      }
-
       // Install features
       console.log(chalk.blue('Installing features...'))
-      for (const feature of features) {
-        console.log(chalk.blue(`Linking ${feature}...`))
-        execSync('npm link', { cwd: resolve(WRAPPER_ROOT, '..', feature.split('/').pop()), stdio: 'inherit' })
-        execSync(`npm link ${feature}`, { cwd: process.cwd(), stdio: 'inherit' })
-      }
+      execSync(`npm install ${features.join(' ')}`, { stdio: 'inherit' })
 
       // Create features directory if it doesn't exist
       const featuresDir = join('src', 'features')
@@ -214,35 +326,33 @@ program
         fs.mkdirSync(featuresDir, { recursive: true })
       }
 
-      // Create index.js to re-export all features
+      // Create index.ts to re-export all features
       const imports = features.map(f => {
         const parts = f.split('/')
-        const lastPart = parts[parts.length - 1] || ''
+        const lastPart = parts[parts.length - 1]
         const featureName = lastPart
           .split('-')
-          .slice(2)
           .map(part => part.charAt(0).toUpperCase() + part.slice(1))
           .join('')
         return `export { ${featureName} } from '${f}'`
       }).join('\n')
       fs.writeFileSync(
-        join(featuresDir, 'index.js'),
+        join(featuresDir, 'index.ts'),
         `${imports}\n`
       )
 
       console.log(chalk.green(`
 Successfully imported features: ${features.join(', ')}
 
-Usage example:
-import { ${features.map(f => {
-        const parts = f.split('/')
-        const lastPart = parts[parts.length - 1] || ''
-        return lastPart
-          .split('-')
-          .slice(2)
-          .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-          .join('')
-      }).join(', ')} } from './features'
+Features are now available in your project. You can import them from:
+  import { ${features.map(f => {
+    const parts = f.split('/')
+    const lastPart = parts[parts.length - 1]
+    return lastPart
+      .split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join('')
+  }).join(', ')} } from './features'
 `))
     } catch (error) {
       console.error(chalk.red('Error importing features:'), error)
