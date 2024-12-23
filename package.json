@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:unit": "vitest run",
