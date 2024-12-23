@@ -1,25 +1,46 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander'
-import { create } from './commands/create'
+import { createFeature } from './commands/create'
 import { importFeatures } from './commands/import'
+import { handleError } from './utils/errors'
 
-const program = new Command()
+const command = process.argv[2]
+const args = process.argv.slice(3)
 
-program
-  .name('@mknz/vue-mfe-wrapper')
-  .description('CLI for managing Vue.js micro-frontend projects')
-  .version('0.1.0')
+async function main() {
+  try {
+    switch (command) {
+      case 'create':
+        if (args.length !== 1) {
+          throw new Error('Usage: vue-mfe create <feature-name>')
+        }
+        await createFeature(args[0])
+        break
 
-program
-  .command('create <project-name>')
-  .description('Create a new Vue.js project with MFE wrapper')
-  .action(create)
+      case 'import':
+        if (args.length === 0) {
+          throw new Error('Usage: vue-mfe import <feature-name> [feature-name...]')
+        }
+        await importFeatures(args)
+        break
 
-program
-  .command('import')
-  .description('Import micro-frontend features')
-  .argument('<features...>', 'Feature names to import (space-separated)')
-  .action(importFeatures)
+      default:
+        console.log(`
+Vue MFE CLI
 
-program.parse()
+Usage:
+  vue-mfe create <feature-name>     Create a new Vue MFE feature
+  vue-mfe import <feature-name...>  Import Vue MFE features into your project
+
+Example:
+  vue-mfe create @mknz/vue-mfe-feature-c
+  vue-mfe import @mknz/vue-mfe-feature-a @mknz/vue-mfe-feature-b
+`)
+        break
+    }
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+main()

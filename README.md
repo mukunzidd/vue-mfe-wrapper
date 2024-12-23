@@ -97,6 +97,7 @@ const config = ref({
 })
 ```
 
+
 3. Use the component in your template:
 ```vue
 <template>

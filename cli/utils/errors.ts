@@ -56,21 +56,30 @@ export function validateFeatureName(name: string, supportedFeatures: string[]): 
   }
 
   if (!supportedFeatures.includes(name)) {
-    throw new CLIError(
-      `Feature "${name}" is not supported.\nSupported features: ${supportedFeatures.join(', ')}`
-    )
+    throw new CLIError(`Feature "${name}" is not supported. Supported features: ${supportedFeatures.join(', ')}`)
+  }
+
+  if (!name.startsWith('@mknz/vue-mfe-')) {
+    throw new CLIError('Feature name must start with "@mknz/vue-mfe-"')
   }
 }
 
 export function checkVueProject(): void {
-  if (!fs.existsSync('package.json')) {
-    throw new CLIError('package.json not found. Make sure you are in a Vue project directory.')
+  const packageJsonPath = path.join(process.cwd(), 'package.json')
+  if (!fs.existsSync(packageJsonPath)) {
+    throw new CLIError('package.json not found. Are you in the correct directory?')
   }
 
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-  if (!packageJson.dependencies?.['@mknz/vue-mfe-wrapper']) {
-    throw new CLIError(
-      'This is not a Vue MFE project. Please run this command in a project created with @mknz/vue-mfe-wrapper.'
-    )
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+    const hasDependency = packageJson.dependencies?.['@mknz/vue-mfe-wrapper'] ||
+                         packageJson.devDependencies?.['@mknz/vue-mfe-wrapper']
+    
+    if (!hasDependency) {
+      throw new CLIError('This is not a Vue MFE project. Please install @mknz/vue-mfe-wrapper first.')
+    }
+  } catch (error) {
+    if (error instanceof CLIError) throw error
+    throw new CLIError('Error reading package.json')
   }
 }
