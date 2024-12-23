@@ -2,6 +2,7 @@
 
 import { createFeature } from './commands/create'
 import { importFeatures } from './commands/import'
+import { listFeatures } from './commands/list'
 import { handleError } from './utils/errors'
 
 const command = process.argv[2]
@@ -24,6 +25,10 @@ async function main() {
         await importFeatures(args)
         break
 
+      case 'list':
+        await listFeatures()
+        break
+
       default:
         console.log(`
 Vue MFE CLI
@@ -31,10 +36,12 @@ Vue MFE CLI
 Usage:
   vue-mfe create <feature-name>     Create a new Vue MFE feature
   vue-mfe import <feature-name...>  Import Vue MFE features into your project
+  vue-mfe list                      List available Vue MFE features
 
 Example:
   vue-mfe create @mknz/vue-mfe-feature-c
   vue-mfe import @mknz/vue-mfe-feature-a @mknz/vue-mfe-feature-b
+  vue-mfe list
 `)
         break
     }
